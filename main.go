@@ -1,7 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 func main() {
-	fmt.Printf("Hello world from Golang")
+	height, kg := 1.67, 53.0
+	IMT := kg / math.Pow(height, 2)
+	fmt.Print(IMT)
 }
