@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"math"
 )
@@ -30,7 +31,12 @@ func main() {
 func CalculateLoop() {
 	fmt.Println("__ IMT Calculator __")
 	height, kg := GetUserProperties()
-	imt := CalculateIMT(height, kg)
+	imt, err := CalculateIMT(height, kg)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
 	switch {
 	case imt < 16:
@@ -73,9 +79,12 @@ func OutputResult(imt float64) {
 	fmt.Println(result)
 }
 
-func CalculateIMT(userHeight float64, userKg float64) (IMT float64) {
-	IMT = userKg / math.Pow(userHeight/100, IMTPower)
-	return
+func CalculateIMT(userHeight float64, userKg float64) (float64, error) {
+	if userHeight <= 0 || userKg <= 0 {
+		return 0, errors.New("Введен некорректный вес или рост")
+	}
+	imt := userKg / math.Pow(userHeight/100, IMTPower)
+	return imt, nil
 }
 
 func GetUserProperties() (float64, float64) {
