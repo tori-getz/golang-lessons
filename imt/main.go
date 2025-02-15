@@ -34,7 +34,7 @@ func CalculateLoop() {
 	imt, err := CalculateIMT(height, kg)
 
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Параметры введены неверно")
 		return
 	}
 
@@ -81,7 +81,7 @@ func OutputResult(imt float64) {
 
 func CalculateIMT(userHeight float64, userKg float64) (float64, error) {
 	if userHeight <= 0 || userKg <= 0 {
-		return 0, errors.New("Введен некорректный вес или рост")
+		return 0, errors.New("PARAMS_ERROR")
 	}
 	imt := userKg / math.Pow(userHeight/100, IMTPower)
 	return imt, nil
