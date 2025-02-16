@@ -3,6 +3,8 @@ package main
 import "fmt"
 
 func main() {
+	fmt.Println("__ transactions app __")
+
 	transactions := []int{}
 
 	for {
