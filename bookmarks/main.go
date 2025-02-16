@@ -25,10 +25,10 @@ Menu:
 			ViewBookmarks(bookmarks)
 
 		case ADD_BOOKMARK:
-			bookmarks = AddBookmark(bookmarks)
+			AddBookmark(bookmarks)
 
 		case REMOVE_BOOKMARK:
-			bookmarks = RemoveBookmark(bookmarks)
+			RemoveBookmark(bookmarks)
 
 		case EXIT_APP:
 			fmt.Println("Have a nice day!")
@@ -56,7 +56,7 @@ func ViewBookmarks(bookmarks bookmarksMap) {
 	fmt.Println("")
 }
 
-func AddBookmark(bookmarks bookmarksMap) bookmarksMap {
+func AddBookmark(bookmarks bookmarksMap) {
 	fmt.Println("")
 	fmt.Println("Add bookmark")
 	fmt.Println("")
@@ -74,11 +74,9 @@ func AddBookmark(bookmarks bookmarksMap) bookmarksMap {
 	fmt.Println("")
 	fmt.Println("Bookmark was added!")
 	fmt.Println("")
-
-	return bookmarks
 }
 
-func RemoveBookmark(bookmarks bookmarksMap) bookmarksMap {
+func RemoveBookmark(bookmarks bookmarksMap) {
 	fmt.Println("")
 	fmt.Println("Remove bookmark")
 	fmt.Println("")
@@ -93,8 +91,6 @@ func RemoveBookmark(bookmarks bookmarksMap) bookmarksMap {
 	fmt.Println("")
 	fmt.Println("Bookmark was deleted!")
 	fmt.Println("")
-
-	return bookmarks
 }
 
 func ShowMenu() {
