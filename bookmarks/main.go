@@ -7,41 +7,41 @@ const ADD_BOOKMARK = 2
 const REMOVE_BOOKMARK = 3
 const EXIT_APP = 4
 
+type bookmarksMap = map[string]string
+
 func main() {
 	fmt.Println("__ bookmarks app __")
 
-	bookmarks := map[string]string{}
-
+	bookmarks := bookmarksMap{}
+Menu:
 	for {
 		ShowMenu()
 
 		choice := GetMenuChoice()
 
 		switch choice {
+
 		case VIEW_BOOKMARKS:
 			ViewBookmarks(bookmarks)
+
 		case ADD_BOOKMARK:
-			bookmarkName, bookmarkUrl := AddBookmark()
-			bookmarks[bookmarkName] = bookmarkUrl
-			fmt.Println("")
-			fmt.Println("Bookmark was added!")
-			fmt.Println("")
+			bookmarks = AddBookmark(bookmarks)
+
 		case REMOVE_BOOKMARK:
-			bookmarkName := RemoveBookmark()
-			delete(bookmarks, bookmarkName)
-			fmt.Println("")
-			fmt.Println("Bookmark was deleted!")
-			fmt.Println("")
+			bookmarks = RemoveBookmark(bookmarks)
+
 		case EXIT_APP:
 			fmt.Println("Have a nice day!")
-			return
+			break Menu
+
 		default:
 			continue
+
 		}
 	}
 }
 
-func ViewBookmarks(bookmarks map[string]string) {
+func ViewBookmarks(bookmarks bookmarksMap) {
 	fmt.Println("")
 	fmt.Println("Bookmarks list:")
 	fmt.Println("")
@@ -56,34 +56,45 @@ func ViewBookmarks(bookmarks map[string]string) {
 	fmt.Println("")
 }
 
-func AddBookmark() (string, string) {
+func AddBookmark(bookmarks bookmarksMap) bookmarksMap {
 	fmt.Println("")
 	fmt.Println("Add bookmark")
 	fmt.Println("")
 
-	name := ""
-	url := ""
+	bookmarkName := ""
+	bookmarkUrl := ""
 
 	fmt.Print("Enter bookmark name: ")
-	fmt.Scan(&name)
+	fmt.Scan(&bookmarkName)
 
 	fmt.Print("Enter bookmark URL: ")
-	fmt.Scan(&url)
+	fmt.Scan(&bookmarkUrl)
 
-	return name, url
+	bookmarks[bookmarkName] = bookmarkUrl
+	fmt.Println("")
+	fmt.Println("Bookmark was added!")
+	fmt.Println("")
+
+	return bookmarks
 }
 
-func RemoveBookmark() string {
+func RemoveBookmark(bookmarks bookmarksMap) bookmarksMap {
 	fmt.Println("")
 	fmt.Println("Remove bookmark")
 	fmt.Println("")
 
-	name := ""
+	bookmarkName := ""
 
 	fmt.Print("Enter bookmark name: ")
-	fmt.Scan(&name)
+	fmt.Scan(&bookmarkName)
 
-	return name
+	delete(bookmarks, bookmarkName)
+
+	fmt.Println("")
+	fmt.Println("Bookmark was deleted!")
+	fmt.Println("")
+
+	return bookmarks
 }
 
 func ShowMenu() {
