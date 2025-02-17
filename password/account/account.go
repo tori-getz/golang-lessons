@@ -2,7 +2,6 @@ package account
 
 import (
 	"errors"
-	"fmt"
 	"net/url"
 	"password/app/timestamp"
 	"password/app/utils"
@@ -19,11 +18,7 @@ type Account struct {
 	timestamp.Timestamp
 }
 
-func (acc Account) PrintAccount() {
-	fmt.Println(acc.Login, acc.Password, acc.Url)
-}
-
-func New(login string, urlString string) (*Account, error) {
+func NewAccount(login string, urlString string) (*Account, error) {
 	_, err := url.ParseRequestURI(urlString)
 
 	if login == "" {

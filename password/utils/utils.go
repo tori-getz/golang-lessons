@@ -27,3 +27,13 @@ func GeneratePassword(strLength int) string {
 
 	return result
 }
+
+func RenderList(items []string) {
+	fmt.Println("")
+	for index, menuItem := range items {
+		choiceNumber := fmt.Sprintf("[%v]", index+1)
+		str := fmt.Sprintf("%v %v\n", color.YellowString(choiceNumber), menuItem)
+		fmt.Print(str)
+	}
+	fmt.Println("")
+}

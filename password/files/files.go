@@ -5,12 +5,28 @@ import (
 	"os"
 )
 
-func Read() {
-
+type JsonDatabase struct {
+	fileName string
 }
 
-func Write(fileName string, content []byte) {
-	file, err := os.Create(fileName)
+func NewJsonDatabase(fileName string) *JsonDatabase {
+	return &JsonDatabase{
+		fileName: fileName,
+	}
+}
+
+func (db *JsonDatabase) Read() ([]byte, error) {
+	file, err := os.ReadFile(db.fileName)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return file, nil
+}
+
+func (db *JsonDatabase) Write(content []byte) {
+	file, err := os.Create(db.fileName)
 
 	if err != nil {
 		fmt.Println(err)

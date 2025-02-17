@@ -1,11 +1,6 @@
 package menu
 
-import (
-	"fmt"
-	"password/app/utils"
-
-	"github.com/fatih/color"
-)
+import "password/app/utils"
 
 const NEW_ACCOUNT = "1"
 const FIND_ACCOUNT = "2"
@@ -22,13 +17,7 @@ func ShowMenu() choice {
 		"Exit",
 	}
 
-	fmt.Println("")
-	for index, menuItem := range menuItems {
-		choiceNumber := fmt.Sprintf("[%v]", index+1)
-		str := fmt.Sprintf("%v %v\n", color.YellowString(choiceNumber), menuItem)
-		fmt.Print(str)
-	}
-	fmt.Println("")
+	utils.RenderList(menuItems[:])
 
 	enteredChoice := utils.GetUserInput("Enter menu number")
 
