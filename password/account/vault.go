@@ -3,8 +3,6 @@ package account
 import (
 	"encoding/json"
 	"errors"
-	"password/app/files"
-	"strings"
 	"time"
 
 	"github.com/fatih/color"
@@ -15,45 +13,61 @@ type Vault struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-type VaultWithDatabase struct {
-	Vault
-	db files.JsonDatabase
+type VaultDb interface {
+	Read() ([]byte, error)
+	Write([]byte) error
 }
 
-func NewVault(db files.JsonDatabase) (*VaultWithDatabase, error) {
+type VaultEncrypter interface {
+	Encrypt([]byte) []byte
+	Decrypt([]byte) []byte
+}
+
+type VaultDecorated struct {
+	Vault
+	db  VaultDb
+	enc VaultEncrypter
+}
+
+func NewVault(db VaultDb, enc VaultEncrypter) (*VaultDecorated, error) {
 	file, err := db.Read()
 	if err != nil {
-		return &VaultWithDatabase{
+		return &VaultDecorated{
 			Vault: Vault{
 				Accounts:  []Account{},
 				UpdatedAt: time.Now(),
 			},
-			db: db,
+			db:  db,
+			enc: enc,
 		}, nil
 	}
+
+	decryptedFile := enc.Decrypt(file)
 
 	var vault Vault
 
-	err = json.Unmarshal(file, &vault)
+	err = json.Unmarshal(decryptedFile, &vault)
 
 	if err != nil {
-		color.Red("vault.json is invalid, use empty vault")
-		return &VaultWithDatabase{
+		color.Red("Vault JSON is invalid, use empty vault")
+		return &VaultDecorated{
 			Vault: Vault{
 				Accounts:  []Account{},
 				UpdatedAt: time.Now(),
 			},
-			db: db,
+			db:  db,
+			enc: enc,
 		}, nil
 	}
 
-	return &VaultWithDatabase{
+	return &VaultDecorated{
 		Vault: vault,
 		db:    db,
+		enc:   enc,
 	}, nil
 }
 
-func (vault *VaultWithDatabase) AddAccount(login string, url string) (*Account, error) {
+func (vault *VaultDecorated) AddAccount(login string, url string) (*Account, error) {
 	newAcc, err := NewAccount(login, url)
 
 	if err != nil {
@@ -67,15 +81,15 @@ func (vault *VaultWithDatabase) AddAccount(login string, url string) (*Account, 
 	return newAcc, nil
 }
 
-func (vault *VaultWithDatabase) FindAccounts(findUrl string) ([]Account, error) {
+type accountValidator = func(*Account) bool
+
+func (vault *VaultDecorated) FindAccounts(validator accountValidator) ([]Account, error) {
 	findAccounts := []Account{}
 
 	for _, account := range vault.Accounts {
-		if !strings.Contains(account.Url, findUrl) {
-			continue
+		if validator(&account) {
+			findAccounts = append(findAccounts, account)
 		}
-
-		findAccounts = append(findAccounts, account)
 	}
 
 	if len(findAccounts) == 0 {
@@ -85,7 +99,7 @@ func (vault *VaultWithDatabase) FindAccounts(findUrl string) ([]Account, error) 
 	return findAccounts, nil
 }
 
-func (vault *VaultWithDatabase) RemoveAccount(findUrl string) error {
+func (vault *VaultDecorated) RemoveAccount(findUrl string) error {
 	nextAccounts := []Account{}
 	accountFinded := false
 
@@ -113,7 +127,7 @@ func (vault *VaultWithDatabase) RemoveAccount(findUrl string) error {
 	return nil
 }
 
-func (vault *VaultWithDatabase) save() error {
+func (vault *VaultDecorated) save() error {
 	vault.Vault.UpdatedAt = time.Now()
 
 	bytes, err := vault.Vault.ToBytes()
@@ -122,7 +136,9 @@ func (vault *VaultWithDatabase) save() error {
 		return err
 	}
 
-	vault.db.Write(bytes)
+	encryptedData := vault.enc.Encrypt(bytes)
+
+	vault.db.Write(encryptedData)
 
 	return nil
 }

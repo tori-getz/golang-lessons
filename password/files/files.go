@@ -25,11 +25,11 @@ func (db *JsonDatabase) Read() ([]byte, error) {
 	return file, nil
 }
 
-func (db *JsonDatabase) Write(content []byte) {
+func (db *JsonDatabase) Write(content []byte) error {
 	file, err := os.Create(db.fileName)
 
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
 
 	defer file.Close()
@@ -38,6 +38,8 @@ func (db *JsonDatabase) Write(content []byte) {
 
 	if err != nil {
 		fmt.Println(err)
-		return
+		return err
 	}
+
+	return nil
 }

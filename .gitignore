@@ -59,4 +59,8 @@ Temporary Items
 # iCloud generated files
 *.icloud
 
+data.vault
+.env*
+!.env.example
+
 # End of https://www.toptal.com/developers/gitignore/api/macos,go
