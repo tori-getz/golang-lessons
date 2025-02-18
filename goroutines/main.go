@@ -3,16 +3,20 @@ package main
 import (
 	"fmt"
 	"goroutines/app/google"
+	"goroutines/app/sumslice"
 	"sync"
 	"time"
 )
 
 func main() {
-	syncRun()
-	asyncRun()
+	googleSingleThread()
+	googleMultiThread()
+	sumSliceSingleThread()
+	sumSliceMultiThread()
 }
 
-func syncRun() {
+func googleSingleThread() {
+	println("Google.com request (Single thread)")
 	t := time.Now()
 
 	for i := 0; i < 9; i++ {
@@ -20,9 +24,11 @@ func syncRun() {
 	}
 
 	fmt.Println("Time: ", time.Since(t))
+	println("")
 }
 
-func asyncRun() {
+func googleMultiThread() {
+	println("Google.com request (Multi thread)")
 	t := time.Now()
 
 	var wg sync.WaitGroup
@@ -47,4 +53,29 @@ func asyncRun() {
 	}
 
 	fmt.Println("Time: ", time.Since(t))
+	println("")
+}
+
+var sliceForTest = []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
+
+func sumSliceSingleThread() {
+	println("Sum slice (Single thread)")
+	t := time.Now()
+
+	sum := sumslice.SumSliceSingleThread(sliceForTest)
+
+	fmt.Println("Sum: ", sum)
+	fmt.Println("Time: ", time.Since(t))
+	println("")
+}
+
+func sumSliceMultiThread() {
+	println("Sum slice (Multi thread)")
+	t := time.Now()
+
+	sum := sumslice.SumSliceMultiThread(sliceForTest)
+
+	fmt.Println("Sum: ", sum)
+	fmt.Println("Time: ", time.Since(t))
+	println("")
 }
